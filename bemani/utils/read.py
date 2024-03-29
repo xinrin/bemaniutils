@@ -4506,6 +4506,154 @@ class ImportMuseca(ImportBase):
             self.finish_batch()
 
 
+class ImportHelloPopn(ImportBase):
+
+    def __init__(
+        self,
+        config: Dict[str, Any],
+        version: str,
+        no_combine: bool,
+        update: bool,
+    ) -> None:
+        if version in ['1']:
+            actual_version = {
+                '1': VersionConstants.HELLO_POPN_MUSIC,
+            }.get(version, -1)
+        elif actual_version == 'all':
+            actual_version = None
+
+        if actual_version in [
+            None,
+            VersionConstants.HELLO_POPN_MUSIC,
+        ]:
+            self.charts = [0, 1, 2]
+
+        else:
+            raise Exception("Unsupported Hello Pop'n Music version! Please use one of the following: hellopopn.")
+
+        super().__init__(config, GameConstants.HELLO_POPN, actual_version, no_combine, update)
+
+    def scrape(self, tsvfile: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+        if self.version is None:
+            raise Exception('Can\'t scrape database for \'all\' version!')
+        songs = []
+        with open(tsvfile, newline='', encoding="utf-8") as tsvhandle:
+            beatread = csv.reader(tsvhandle, delimiter='|', quotechar='"')  # type: ignore
+            for row in beatread:
+                songid = int(row[0])
+                name = row[1]
+                artist = row[2]
+                easy = 1
+                normal = 10
+                hard = 100
+                genre = ""
+
+                song = {
+                    'id': songid,
+                    'title': name,
+                    'artist': artist,
+                    'genre': genre,
+                    'difficulty': {
+                        'easy': easy,
+                        'normal': normal,
+                        'hard': hard,
+                    },
+                    'category': self.version
+                }
+                songs.append(song)
+
+        return songs
+
+    def lookup(self, server: str, token: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+        if self.version is None:
+            raise Exception('Can\'t look up database for \'all\' version!')
+
+        # Grab music info from remote server
+        music = self.remote_music(server, token)
+        songs = music.get_all_songs(self.game, self.version)
+        lut: Dict[int, Dict[str, Any]] = {}
+        chart_map = {
+            0: 'easy',
+            1: 'normal',
+            2: 'hard',
+        }
+
+        # Format it the way we expect
+        for song in songs:
+            if song.chart not in chart_map:
+                # Ignore charts on songs we don't support/care about.
+                continue
+
+            if song.id not in lut:
+                lut[song.id] = {
+                    'id': song.id,
+                    'title': song.name,
+                    'artist': song.artist,
+                    'genre': song.genre,
+                    'difficulty': {
+                        'easy': 0,
+                        'normal': 1,
+                        'hard': 2,
+                    },
+                    'category': self.version
+                }
+            lut[song.id]['difficulty'][chart_map[song.chart]] = song.data.get_int('difficulty')
+
+        # Reassemble the data
+        reassembled_songs = [val for _, val in lut.items()]
+
+
+        return reassembled_songs
+
+    def import_music_db(self, songs: List[Dict[str, Any]],version: int) -> None:
+        if self.version is None:
+            raise Exception('Can\'t import database for \'all\' version!')
+
+        chart_map: Dict[int, str] = {
+            0: 'easy',
+            1: 'normal',
+            2: 'hard',
+        }
+        for song in songs:
+            songid = song['id']
+
+            self.start_batch()
+            for chart in self.charts:
+                # First, try to find in the DB from another version
+                old_id = self.get_music_id_for_song(songid, chart, version)
+
+                if(chart <= 2):
+                    # First, try to find in the DB from another version
+                    if self.no_combine is None or old_id is None:
+                        # Insert original
+                        print(f"New entry for {songid} chart {chart}")
+                        next_id = self.get_next_music_id()
+                    else:
+                        # Insert pointing at same ID so scores transfer
+                        print(f"Reused entry for {songid} chart {chart}")
+                        next_id = self.get_next_music_id()
+                    data = {
+                        'difficulty': song['difficulty'][chart_map[chart]],
+                        'category': self.version
+                    }
+                else:
+                    # First, try to find in the DB from another version
+                    if self.no_combine is None:
+                        # Insert original
+                        print(f"New entry for {songid} chart {chart}")
+                        next_id = self.get_next_music_id()
+                    else:
+                        # Insert pointing at same ID so scores transfer
+                        print(f"Reused entry for {songid} chart {chart}")
+                        next_id = self.get_next_music_id()
+                    data = {
+                        'difficulty': song['difficulty'][chart_map[chart]],
+                        'category': self.version
+                    }
+                self.insert_music_id_for_song(next_id, songid, chart, song['title'], song['artist'], song['genre'], data)
+            self.finish_batch()
+
+
 class ReflecBeatScrapeConfiguration:
     def __init__(
         self,
@@ -5231,6 +5379,21 @@ def main() -> None:
         danevo.import_music_db(songs)
         danevo.close()
 
+    elif series == GameConstants.HELLO_POPN:
+        hellopopn = ImportHelloPopn(config, args.version, args.no_combine, args.update)
+        # Normal case, doing a music DB or emblem import.
+        if args.tsv is not None:
+            songs = hellopopn.scrape(args.tsv)
+        elif args.server and args.token:
+            songs = hellopopn.lookup(args.server, args.token)
+        else:
+            raise Exception(
+                'No TSV provided and no remote server specified! Please ' +
+                'provide either a --tsv or a --server and --token option!'
+            )
+        hellopopn.import_music_db(songs,args.version)
+        hellopopn.close()
+        
     else:
         raise CLIException("Unsupported game series!")
 

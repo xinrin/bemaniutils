@@ -21,6 +21,7 @@ class GameConstants(Enum):
     POPN_MUSIC: Final[str] = "pnm"
     REFLEC_BEAT: Final[str] = "reflec"
     SDVX: Final[str] = "sdvx"
+    HELLO_POPN: Final[str] = 'hpnm'
 
 
 class VersionConstants:
@@ -138,6 +139,8 @@ class VersionConstants:
     SDVX_INFINITE_INFECTION: Final[int] = 2
     SDVX_GRAVITY_WARS: Final[int] = 3
     SDVX_HEAVENLY_HAVEN: Final[int] = 4
+
+    HELLO_POPN_MUSIC: Final[int] = 1
 
 
 class APIConstants(Enum):

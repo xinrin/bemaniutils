@@ -813,6 +813,51 @@ def navigation() -> Dict[str, Any]:
             },
         )
 
+    if GameConstants.HELLO_POPN in g.config.support:
+        # Hello Pop'n Music pages
+        hello_popn_entries = []
+        if len([p for p in profiles if p[0] == GameConstants.HELLO_POPN]) > 0:
+            hello_popn_entries.extend([
+                {
+                    "label": "Game Options",
+                    "uri": url_for("hpnm_pages.viewsettings"),
+                },
+                {
+                    "label": "Personal Profile",
+                    "uri": url_for("hpnm_pages.viewplayer", userid=g.userID),
+                },
+                {
+                    'label': 'Personal Scores',
+                    'uri': url_for('hpnm_pages.viewscores', userid=g.userID),
+                },
+                {
+                    "label": "Personal Records",
+                    "uri": url_for("hpnm_pages.viewrecords", userid=g.userID),
+                },
+            ])
+        hello_popn_entries.extend([
+            {
+                'label': 'Global Scores',
+                'uri': url_for('hpnm_pages.viewnetworkscores'),
+            },
+            {
+                "label": "Global Records",
+                "uri": url_for("hpnm_pages.viewnetworkrecords"),
+            },
+            {
+                'label': 'All Players',
+                'uri': url_for('hpnm_pages.viewplayers'),
+            },
+        ])
+        pages.append(
+            {
+                'label': "Hello Pop'n Music",
+                'entries': hello_popn_entries,
+                'base_uri': app.blueprints['hpnm_pages'].url_prefix,
+                'gamecode': GameConstants.HELLO_POPN,
+            },
+        )
+
     # Admin pages
     if user.admin:
         pages.append(

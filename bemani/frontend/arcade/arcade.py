@@ -45,6 +45,7 @@ def format_machine(machine: Machine) -> Dict[str, Any]:
             GameConstants.POPN_MUSIC: "Pop'n Music",
             GameConstants.REFLEC_BEAT: "Reflec Beat",
             GameConstants.SDVX: "SDVX",
+            GameConstants.HELLO_POPN: "Hello Pop'n Music",
         }.get(machine.game)
     elif machine.version > 0:
         game = [

@@ -279,6 +279,7 @@ def viewmachines() -> Response:
                 GameConstants.POPN_MUSIC.value: "Pop'n Music",
                 GameConstants.REFLEC_BEAT.value: "Reflec Beat",
                 GameConstants.SDVX.value: "SDVX",
+                GameConstants.HELLO_POPN.value: "Hello Pop'n Music",
             },
             "games": games,
             "enforcing": g.config.server.enforce_pcbid,

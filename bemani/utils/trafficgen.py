@@ -59,6 +59,7 @@ from bemani.client.reflec import (
 )
 from bemani.client.bishi import TheStarBishiBashiClient
 from bemani.client.mga.mga import MetalGearArcadeClient
+from bemani.client.hellopopn import HelloPopnMuiscClient
 
 
 def get_client(proto: ClientProtocol, pcbid: str, game: str, config: Dict[str, Any]) -> BaseClient:
@@ -308,6 +309,12 @@ def get_client(proto: ClientProtocol, pcbid: str, game: str, config: Dict[str, A
             pcbid,
             config,
         )
+    if game == 'hpnm':
+        return HelloPopnMuiscClient(
+            proto,
+            pcbid,
+            config,
+        )
 
     raise Exception(f"Unknown game {game}")
 
@@ -535,6 +542,11 @@ def mainloop(
             "model": "I36:J:A:A:2011092900",
             "avs": None,
         },
+        'hpnm': {
+            'name': "Hello Pop'n Music",
+            'model': "JMP:J:A:A:2014122500",
+            'avs': None,
+        },
     }
     if action == "list":
         for game in sorted([game for game in games]):
@@ -656,6 +668,7 @@ def main() -> None:
         "reflec-5": "reflec-volzza",
         "reflec-6": "reflec-volzza2",
         "mga": "metal-gear-arcade",
+        'hpnm': 'hpnm',
     }.get(game, game)
 
     mainloop(args.address, args.port, args.config, action, game, args.cardid, args.verbose)

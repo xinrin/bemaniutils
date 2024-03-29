@@ -56,3 +56,6 @@ set -e
 ./read --series reflec --version 4 "$@"
 ./read --series reflec --version 5 "$@"
 ./read --series reflec --version 6 "$@"
+
+# Init Hello Pop'n Music
+./read --series hpnm --version 1 "$@"

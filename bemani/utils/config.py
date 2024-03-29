@@ -11,8 +11,10 @@ from bemani.backend.sdvx import SoundVoltexFactory
 from bemani.backend.reflec import ReflecBeatFactory
 from bemani.backend.museca import MusecaFactory
 from bemani.backend.mga import MetalGearArcadeFactory
+from bemani.backend.hellopopn import HelloPopnFactory
 from bemani.common import GameConstants, cache
 from bemani.data import Config, Data
+
 
 
 def load_config(filename: str, config: Config) -> None:
@@ -78,3 +80,5 @@ def register_games(config: Config) -> None:
         MusecaFactory.register_all()
     if GameConstants.MGA in config.support:
         MetalGearArcadeFactory.register_all()
+    if GameConstants.HELLO_POPN in config.support:
+        HelloPopnFactory.register_all()

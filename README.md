@@ -283,7 +283,7 @@ BEMANI games boot and supports full scores, profile and events for Beatmania IID
 Pop'n Music 19-26, Jubeat Saucer, Saucer Fulfill, Prop, Qubell, Clan and Festo, Sound
 Voltex 1, 2, 3 Season 1/2 and 4, Dance Dance Revolution X2, X3, 2013, 2014 and Ace,
 MÚSECA 1, MÚSECA 1+1/2, MÚSECA Plus, Reflec Beat, Limelight, Colette, groovin'!! Upper,
-Volzza 1 and Volzza 2, Metal Gear Arcade, and finally The\*BishiBashi. Note that it also
+Volzza 1 and Volzza 2, Metal Gear Arcade, Hello Pop'n Music and finally The\*BishiBashi. Note that it also
 has matching support for all Reflec Beat versions as well as MGA. By default, this serves
 traffic based solely on the database it is configured against. If you federate with
 other networks using the "Data API" admin page, it will upgrade to serving traffic
@@ -328,8 +328,8 @@ this will run through and attempt to verify simple operation of that service. No
 guarantees are made on the accuracy of the emulation though I've strived to be
 correct. In some cases, I will verify the response, and in other cases I will
 simply verify that certain things exist so as not to crash a real client. This
-currently generates traffic emulating Beatmania IIDX 20-26, Pop'n Music 19-26, Jubeat
-Saucer, Fulfill, Prop, Qubell, Clan and Festo, Sound Voltex 1, 2, 3 Season 1/2 and 4,
+currently generates traffic emulating Beatmania IIDX 20-26, Pop'n Music 19-26, Hello Pop'n Music
+Jubeat Saucer, Fulfill, Prop, Qubell, Clan and Festo, Sound Voltex 1, 2, 3 Season 1/2 and 4,
 Dance Dance Revolution X2, X3, 2013, 2014 and Ace, The\*BishiBashi, MÚSECA 1 and MÚSECA
 1+1/2, Reflec Beat, Reflec Beat Limelight, Reflec Beat Colette, groovin'!! Upper,
 Volzza 1 and Volzza 2 ad Metal Gear Arcade and can verify card events and score events
@@ -506,6 +506,14 @@ If you have more than one XML you want to add, you can run this command with a f
 
 ```
 ./read --config config/server.yaml --series pnm --version omni-24 --bin popn24.dll --folder my/xmls/path
+```
+
+### Hello Pop'n Music
+
+For Hello Pop'n Music, run the tsv file in data folder, giving the correct tsv file:
+
+```
+./read --config config/server.yaml --series hpnm --version 1 --tsv data/hellopopn.tsv
 ```
 
 ### Jubeat
