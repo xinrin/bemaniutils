@@ -4591,9 +4591,9 @@ class ImportHelloPopn(ImportBase):
                     'artist': song.artist,
                     'genre': song.genre,
                     'difficulty': {
-                        'easy': 0,
-                        'normal': 1,
-                        'hard': 2,
+                        'easy': 1,
+                        'normal': 10,
+                        'hard': 100,
                     },
                     'category': self.version
                 }
@@ -4602,10 +4602,9 @@ class ImportHelloPopn(ImportBase):
         # Reassemble the data
         reassembled_songs = [val for _, val in lut.items()]
 
-
         return reassembled_songs
 
-    def import_music_db(self, songs: List[Dict[str, Any]],version: int) -> None:
+    def import_music_db(self, songs: List[Dict[str, Any]], version: int) -> None:
         if self.version is None:
             raise Exception('Can\'t import database for \'all\' version!')
 
@@ -5391,9 +5390,9 @@ def main() -> None:
                 'No TSV provided and no remote server specified! Please ' +
                 'provide either a --tsv or a --server and --token option!'
             )
-        hellopopn.import_music_db(songs,args.version)
+        hellopopn.import_music_db(songs, args.version)
         hellopopn.close()
-        
+
     else:
         raise CLIException("Unsupported game series!")
 

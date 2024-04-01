@@ -16,7 +16,6 @@ from bemani.common import GameConstants, cache
 from bemani.data import Config, Data
 
 
-
 def load_config(filename: str, config: Config) -> None:
     config.update(yaml.safe_load(open(filename)))
     config["database"]["engine"] = Data.create_engine(config)

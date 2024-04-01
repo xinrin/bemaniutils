@@ -5,8 +5,9 @@ from typing import Any, Dict
 from bemani.backend.hellopopn.base import HelloPopnBase
 from bemani.backend.ess import EventLogHandler
 from bemani.common import ValidatedDict, VersionConstants, Profile
-from bemani.data import  Score
+from bemani.data import Score
 from bemani.protocol import Node
+
 
 class HelloPopnMusic(
     EventLogHandler,
@@ -16,14 +17,11 @@ class HelloPopnMusic(
     version = VersionConstants.HELLO_POPN_MUSIC
 
     @classmethod
-
     def get_settings(cls) -> Dict[str, Any]:
         """
         Return all of our front-end modifiably settings.
         """
         return {
-            "ints": [      
-            ],
             'bools': [
                 {
                     'name': 'Force Song Unlock',
@@ -46,18 +44,18 @@ class HelloPopnMusic(
         flag.set_attribute("t", '1')
 
         root.add_child(Node.u32("cnt_music", 36))
-        
+
         return root
-    
+
     def handle_game_shop_request(self, request: Node) -> Node:
         root = Node.void('game')
 
         return root
 
     def handle_game_new_request(self, request: Node) -> Node:
-        #profile creation
+        # profile creation
         root = Node.void('game')
-        
+
         userid = self.data.remote.user.from_refid(self.game, self.version, request.attribute('refid'))
 
         defaultprofile = Profile(
@@ -66,12 +64,12 @@ class HelloPopnMusic(
             request.attribute('refid'),
             0,
             {
-              'name': "なし",
-              'chara': "0",
-              'music_id': "0",
-              'level': "0",
-              'style': "0",
-              'love': "0"
+                'name': "なし",
+                'chara': "0",
+                'music_id': "0",
+                'level': "0",
+                'style': "0",
+                'love': "0"
             },
         )
         self.put_profile(userid, defaultprofile)
@@ -79,33 +77,31 @@ class HelloPopnMusic(
         return root
 
     def handle_game_load_request(self, request: Node) -> Node:
-        #Load profile values
+        # Load profile values
         root = Node.void('game')
-
 
         userid = self.data.remote.user.from_refid(self.game, self.version, request.attribute('refid'))
         profile = self.get_profile(userid)
-        
+
         achievements = self.data.local.user.get_achievements(self.game, self.version, userid)
 
         game_config = self.get_game_config()
         force_unlock_songs = game_config.get_bool("force_unlock_songs")
-        #if we send all chara love as max, all songs will be unlocked
+        # if we send all chara love as max, all songs will be unlocked
         if force_unlock_songs:
-          for n in range(12):
-              chara = Node.void('chara')
-              chara.set_attribute('id', str(n))
-              chara.set_attribute('love', "5")
-              root.add_child(chara)
+            for n in range(12):
+                chara = Node.void('chara')
+                chara.set_attribute('id', str(n))
+                chara.set_attribute('love', "5")
+                root.add_child(chara)
         else:
-          #load chara love progress
-          for achievement in achievements:
-                  if achievement.type == 'toki_love':
-                      chara = Node.void('chara')
-                      chara.set_attribute('id', str(achievement.id))
-                      chara.set_attribute('love', achievement.data.get_str('love'))
-                      root.add_child(chara)
-
+            # load chara love progress
+            for achievement in achievements:
+                if achievement.type == 'toki_love':
+                    chara = Node.void('chara')
+                    chara.set_attribute('id', str(achievement.id))
+                    chara.set_attribute('love', achievement.data.get_str('love'))
+                    root.add_child(chara)
 
         last = Node.void('last')
         root.add_child(last)
@@ -115,11 +111,11 @@ class HelloPopnMusic(
         last.set_attribute('style', profile.get_str('style'))
 
         self.update_play_statistics(userid)
-        
+
         return root
 
     def handle_game_load_m_request(self, request: Node) -> Node:
-        #Load scores
+        # Load scores
         userid = self.data.remote.user.from_refid(self.game, self.version, request.attribute('refid'))
         scores = self.data.remote.music.get_scores(self.game, self.version, userid)
 
@@ -129,7 +125,7 @@ class HelloPopnMusic(
             if score.id not in sortedscores:
                 sortedscores[score.id] = {}
             sortedscores[score.id][score.chart] = score
-        
+
         for song in sortedscores:
             for chart in sortedscores[song]:
                 score = sortedscores[song][chart]
@@ -152,7 +148,7 @@ class HelloPopnMusic(
         return root
 
     def handle_game_save_request(self, request: Node) -> Node:
-        #Save profile data 
+        # Save profile data
         root = Node.void('game')
 
         userid = self.data.remote.user.from_refid(self.game, self.version, request.attribute('refid'))
@@ -169,35 +165,32 @@ class HelloPopnMusic(
 
         self.put_profile(userid, newprofile)
 
-
         game_config = self.get_game_config()
         force_unlock_songs = game_config.get_bool("force_unlock_songs")
-        #if we were on force unlock mode, achievements will not be modified
+        # if we were on force unlock mode, achievements will not be modified
         if force_unlock_songs is False:
-          achievements = self.data.local.user.get_achievements(self.game, self.version, userid)
-          love = last.attribute('love')
-          for achievement in achievements:
-                  if achievement.type == 'toki_love' and achievement.id == int(last.attribute('chara')):
-                      love = str(int(achievement.data["love"]) + 1)
-                      if achievement.data["love"] == "5":
-                          love = "5"
-  
-          
-          self.data.local.user.put_achievement(
-                    self.game,
-                    self.version,
-                    userid,
-                    int(last.attribute('chara')),
-                    'toki_love',
-                    {
-                        'love': love,
-                    },
-                )
+            achievements = self.data.local.user.get_achievements(self.game, self.version, userid)
+            chara = int(last.attribute('chara'))
+            for achievement in achievements:
+                if achievement.type == 'toki_love' and achievement.id == chara:
+                    love = int(achievement.data["love"])
+                    if love > 5:
+                        self.data.local.user.put_achievement(
+                            self.game,
+                            self.version,
+                            userid,
+                            chara,
+                            'toki_love',
+                            {
+                                'love': str(love + 1),
+                            },
+                        )
+                        break
 
         return root
 
     def handle_game_save_m_request(self, request: Node) -> Node:
-        #Score saving
+        # Score saving
 
         clear_type = int(request.attribute('clear_type'))
         level = int(request.attribute('level'))
@@ -206,8 +199,8 @@ class HelloPopnMusic(
         points = int(request.attribute('score'))
 
         userid = self.data.remote.user.from_refid(self.game, self.version, refid)
-        
-        #pull old score
+
+        # Pull old score
         oldscore = self.data.local.music.get_score(
             self.game,
             self.version,
@@ -227,14 +220,13 @@ class HelloPopnMusic(
             highscore = points >= oldscore.points
             points = max(oldscore.points, points)
             scoredata = oldscore.data
-        
-        #Clear type
+
+        # Clear type
         scoredata.replace_int('clear_type', max(scoredata.get_int('clear_type'), clear_type))
         history.replace_int('clear_type', clear_type)
 
         # Look up where this score was earned
         lid = self.get_machine_id()
-
 
         # Write the new score back
         self.data.local.music.put_score(
@@ -261,7 +253,7 @@ class HelloPopnMusic(
             history,
             highscore,
         )
-        
+
         root = Node.void('game')
 
         return root

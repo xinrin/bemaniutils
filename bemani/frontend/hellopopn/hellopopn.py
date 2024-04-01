@@ -1,10 +1,10 @@
-import copy
 from typing import Any, Dict, Iterator, List, Tuple
 from flask_caching import Cache  # type: ignore
-from bemani.backend.hellopopn import HelloPopnFactory,HelloPopnBase
+from bemani.backend.hellopopn import HelloPopnFactory, HelloPopnBase
 from bemani.common import Profile, ValidatedDict, GameConstants
-from bemani.data import Data,UserID,Attempt, Song
+from bemani.data import Data, UserID, Attempt, Song
 from bemani.frontend.base import FrontendBase
+
 
 class HelloPopnMusicFrontend(FrontendBase):
 
@@ -31,7 +31,7 @@ class HelloPopnMusicFrontend(FrontendBase):
         formatted_profile["love"] = profile.get_str("love")
         formatted_profile["level"] = profile.get_str("level")
         return formatted_profile
-    
+
     def format_attempt(self, userid: UserID, attempt: Attempt) -> Dict[str, Any]:
         formatted_attempt = super().format_attempt(userid, attempt)
         formatted_attempt["clear_type"] = attempt.data.get_int("clear_type")

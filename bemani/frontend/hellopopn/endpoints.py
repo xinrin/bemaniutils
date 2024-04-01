@@ -1,5 +1,4 @@
 import re
-from flask import Blueprint
 from bemani.frontend.templates import templates_location
 from bemani.frontend.static import static_location
 from bemani.data import UserID
@@ -29,7 +28,6 @@ def viewnetworkscores() -> Response:
     if len(network_scores["attempts"]) > 10:
         network_scores["attempts"] = frontend.round_to_ten(network_scores["attempts"])
 
-
     return render_react(
         "Global Hello Pop'n Music Scores",
         "hpnm/scores.react.js",
@@ -47,12 +45,14 @@ def viewnetworkscores() -> Response:
         },
     )
 
+
 @hpnm_pages.route("/scores/list")
 @jsonify
 @loginrequired
 def listnetworkscores() -> Dict[str, Any]:
     frontend = HelloPopnMusicFrontend(g.data, g.config, g.cache)
     return frontend.get_network_scores()
+
 
 @hpnm_pages.route('/scores/<int:userid>')
 @loginrequired
@@ -61,7 +61,7 @@ def viewscores(userid: UserID) -> Response:
     info = frontend.get_latest_player_info([userid]).get(userid)
     if info is None:
         abort(404)
-    scores = frontend.get_scores(userid,limit=100)
+    scores = frontend.get_scores(userid, limit=100)
 
     if len(scores) > 10:
         scores = frontend.round_to_ten(scores)
@@ -83,6 +83,7 @@ def viewscores(userid: UserID) -> Response:
         },
     )
 
+
 @hpnm_pages.route("/scores/<int:userid>/list")
 @jsonify
 @loginrequired
@@ -92,6 +93,7 @@ def listscores(userid: UserID) -> Dict[str, Any]:
         "attempts": frontend.get_scores(userid),
         "players": {},
     }
+
 
 @hpnm_pages.route("/topscores/<int:musicid>")
 @loginrequired
@@ -106,13 +108,13 @@ def viewtopscores(musicid: int) -> Response:
     artist = None
 
     for version in versions:
-            for chart in [0, 1, 2]:
-                details = g.data.local.music.get_song(GameConstants.HELLO_POPN, version, musicid, chart)
-                if details is not None:
-                    if name is None:
-                        name = details.name
-                    if artist is None:
-                        artist = details.artist
+        for chart in [0, 1, 2]:
+            details = g.data.local.music.get_song(GameConstants.HELLO_POPN, version, musicid, chart)
+            if details is not None:
+                if name is None:
+                    name = details.name
+                if artist is None:
+                    artist = details.artist
 
     if name is None:
         # Not a real song!
@@ -161,6 +163,7 @@ def viewplayers() -> Response:
         },
     )
 
+
 @hpnm_pages.route('/players/list')
 @jsonify
 @loginrequired
@@ -207,6 +210,7 @@ def listplayer(userid: UserID) -> Dict[str, Any]:
     return {
         "player": info,
     }
+
 
 @hpnm_pages.route("/options")
 @loginrequired
@@ -269,6 +273,7 @@ def updatename() -> Dict[str, Any]:
         "version": version,
         "name": name,
     }
+
 
 @hpnm_pages.route("/records")
 @loginrequired

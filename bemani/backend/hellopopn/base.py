@@ -1,9 +1,7 @@
-from typing import Optional
 from typing_extensions import Final
 from bemani.backend.base import Base
 from bemani.backend.core import CoreHandler, CardManagerHandler, PASELIHandler
-from bemani.common import GameConstants, ValidatedDict
-from bemani.protocol import Node
+from bemani.common import GameConstants
 
 
 class HelloPopnBase(CoreHandler, CardManagerHandler, PASELIHandler, Base):
