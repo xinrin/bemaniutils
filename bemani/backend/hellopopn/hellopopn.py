@@ -174,7 +174,7 @@ class HelloPopnMusic(
             for achievement in achievements:
                 if achievement.type == 'toki_love' and achievement.id == chara:
                     love = int(achievement.data["love"])
-                    if love > 5:
+                    if love < 5:
                         self.data.local.user.put_achievement(
                             self.game,
                             self.version,
