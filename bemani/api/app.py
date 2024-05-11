@@ -46,7 +46,7 @@ def before_request() -> None:
             authtype = None
             authtoken = None
 
-        if authtype.lower() == "token":
+        if authtype is not None and authtoken is not None and authtype.lower() == "token":
             g.authorized = g.data.local.api.validate_client(authtoken)
 
 
