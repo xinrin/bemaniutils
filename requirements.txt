@@ -28,4 +28,4 @@ pefile
 pillow
 discord_webhook
 iced-x86
-pylibmc ; sys_platform != 'win32'
+python-memcached
