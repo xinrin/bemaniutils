@@ -19,7 +19,7 @@ types-python-dateutil
 flake8==4.0.1
 typed-ast
 freezegun
-pyreact
+pyreact @ git+https://github.com/DragonMinded/react-python@main
 Flask-Caching
 blinker
 pycryptodome

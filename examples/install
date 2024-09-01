@@ -10,7 +10,7 @@ pushd /path/to/git/checkout
 source /path/to/your/virtualenv/bin/activate
 
 # Install dependencies, install this library.
-python3 -m pip install --upgrade pip wheel
+python3 -m pip install --upgrade pip wheel setuptools
 python3 -m pip install --upgrade -r requirements.txt
 python3 -m pip install --upgrade .
 
