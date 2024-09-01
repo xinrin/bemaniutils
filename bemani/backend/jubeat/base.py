@@ -360,9 +360,9 @@ class JubeatBase(CoreHandler, CardManagerHandler, PASELIHandler, Base):
         normalindex = 2
         premiumindex = 1
         if normalemblems:
-            normalindex = random.sample(normalemblems, 1)[0]
+            normalindex = random.sample(list(normalemblems), 1)[0]
         if premiumemblems:
-            premiumindex = random.sample(premiumemblems, 1)[0]
+            premiumindex = random.sample(list(premiumemblems), 1)[0]
 
         return normalindex, premiumindex
 
