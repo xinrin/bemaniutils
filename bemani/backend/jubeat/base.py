@@ -167,7 +167,7 @@ class JubeatBase(CoreHandler, CardManagerHandler, PASELIHandler, Base):
             return None
 
         cache_key = f"get_scores_by_extid-{extid}"
-        score: Optional[List[Score]]
+        scores: Optional[List[Score]]
 
         if partition == 1:
             # We fetch all scores on the first partition and then divy up

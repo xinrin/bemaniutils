@@ -1,3 +1,4 @@
+setuptools
 Cython
 SQLAlchemy<2.0.0
 alembic
@@ -16,7 +17,7 @@ types-Werkzeug
 types-Flask
 types-freezegun
 types-python-dateutil
-flake8==4.0.1
+flake8
 typed-ast
 freezegun
 pyreact @ git+https://github.com/DragonMinded/react-python@main
